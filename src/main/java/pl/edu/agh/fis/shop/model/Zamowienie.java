@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * Klasa mapująca się na tabelę Zamowienie z bazy danych
+ */
 @Entity
 @Data
 @AllArgsConstructor
@@ -22,4 +25,5 @@ public class Zamowienie {
     @Column(name = "id_produkt")
     private int produktId;
     private int ilosc;
+    private double suma;
 }

@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * Klasa mapująca się na tabelę Produkt z bazy danych
+ */
 @Entity
 @Data
 @AllArgsConstructor

@@ -8,6 +8,10 @@ import org.hibernate.annotations.Subselect;
 
 import javax.persistence.*;
 
+
+/**
+ * Klasa mapująca się na widok produkty_dla_sklepu z bazy danych, pokazuje produkty w danym sklepie z ich opisem słownym
+ */
 @Entity
 @Table(name = "`produkty_dla_sklepu`")
 @Immutable

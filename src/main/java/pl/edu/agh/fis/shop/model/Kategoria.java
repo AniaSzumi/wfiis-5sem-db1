@@ -6,8 +6,11 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+
+/**
+ * Klasa mapująca się na tabelę Kaegoria z bazy danych
+ */
 @Entity
-//@Table(name = "kategoria")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

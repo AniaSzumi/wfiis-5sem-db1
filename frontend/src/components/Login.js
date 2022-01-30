@@ -10,7 +10,7 @@ function Login({ setUser, userRole, setUserRole }) {
     let navigate = useNavigate();
 
     const login = () => {
-            fetch("/" + userRole + "/login", {
+            fetch("/api/" + userRole + "/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -18,8 +18,8 @@ function Login({ setUser, userRole, setUserRole }) {
                 body: JSON.stringify({email, password})
             }).then((res) => res.json())
                 .then((data) => {
-                    setUser(data)
                     if (Object.keys(data).length > 0) {
+                        setUser(data)
                         setFoundUser(true)
                         sessionStorage.setItem("user", JSON.stringify(data))
                         sessionStorage.setItem("userRole", userRole)
@@ -27,6 +27,7 @@ function Login({ setUser, userRole, setUserRole }) {
                     } else {
                         setFoundUser(false)
                     }
+                    window.location.reload()
                 })
                 .catch((error) => console.log(error))
         }

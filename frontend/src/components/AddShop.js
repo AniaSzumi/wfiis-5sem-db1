@@ -21,7 +21,7 @@ function AddShop({ user }) {
                 ulica: street,
                 numer: number
             }
-            fetch("/adres/", {
+            fetch("/api/adres/", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -46,7 +46,7 @@ function AddShop({ user }) {
                 adresId: addressId,
                 managerId: user.id
             }
-            fetch("/sklep/", {
+            fetch("/api/sklep/", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

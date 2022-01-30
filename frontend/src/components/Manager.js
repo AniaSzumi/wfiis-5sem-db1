@@ -13,19 +13,19 @@ function Manager({ user }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("/pracownik/")
+        fetch("/api/pracownik/")
             .then((res) => res.json())
             .then((data) => setAllWorkers(data))
             .catch((err) => console.log(err))
-        fetch("/pracownik/manager/"+user.id)
+        fetch("/api/pracownik/manager/"+user.id)
             .then((res) => res.json())
             .then((data) => setMyWorkers(data))
             .catch((err) => console.log(err))
-        fetch("/sklep/")
+        fetch("/api/sklep/")
             .then((res) => res.json())
             .then((data) => setAllShops(data))
             .catch((err) => console.log(err))
-        fetch("/sklep/manager/"+user.id)
+        fetch("/api/sklep/manager/"+user.id)
             .then((res) => res.json())
             .then((data) => setMyShops(data))
             .catch((err) => console.log(err))

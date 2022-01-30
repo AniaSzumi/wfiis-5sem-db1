@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * Klasa mapująca się na widok zamowienie_opis z bazy danych, dostarcza wszystkich danych tekstowych w zamówieniu
+ */
 @Entity
 @Data
 @AllArgsConstructor

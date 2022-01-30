@@ -6,6 +6,10 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+
+/**
+ * Klasa mapująca się na tabelę Klient z bazy danych
+ */
 @Entity
 @Data
 @AllArgsConstructor

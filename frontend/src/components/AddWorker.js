@@ -16,7 +16,7 @@ function AddWorker({ user }) {
     let navigate = useNavigate();
 
     useEffect(() => {
-        fetch("/sklep/")
+        fetch("/api/sklep/")
             .then((res) => res.json())
             .then((data) => setShops(data))
             .catch((err) => console.log(err))
@@ -32,7 +32,7 @@ function AddWorker({ user }) {
                 managerId: user.id,
                 shopId: currentShop.charAt(0),
             }
-            fetch("/pracownik/register", {
+            fetch("/api/pracownik/register", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

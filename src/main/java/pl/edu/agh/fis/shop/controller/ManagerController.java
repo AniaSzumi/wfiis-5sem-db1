@@ -10,34 +10,51 @@ import pl.edu.agh.fis.shop.repository.ManagerRepository;
 
 import java.util.List;
 
+/**
+ * Kontroler zajmujący się managerami
+ */
 @CrossOrigin
 @RestController
-@RequestMapping("/manager")
+@RequestMapping("/api/manager")
 @AllArgsConstructor
 public class ManagerController {
 
     private final ManagerRepository managerRepository;
 
+    /**
+     * Funkcja znajdująca wszystkich managerów
+     * @return lista wszystkich managerów
+     */
     @GetMapping("/")
     public List<Manager> getAll() {
         return managerRepository.findAll();
     }
 
+    /**
+     * Funkcja znajdująca na bazie danych managera po danym id
+     * @param id id managera do znalezienia
+     * @return znaleziony manager
+     */
     @GetMapping("/{id}")
     public Manager getById(@PathVariable int id) {
         return managerRepository.findById(id).orElse(new Manager());
     }
 
-    @PostMapping("/")
-    public Manager create(@RequestBody Manager manager) {
-        return managerRepository.save(manager);
-    }
-
+    /**
+     * Funkcja szukająca managera na bazie po emailu i haśle, używana przy zalogowaniu
+     * @param loginForm email i hasło wpisane przy logowaniu
+     * @return znaleziony manager
+     */
     @PostMapping("/login")
     public Manager login(@RequestBody LoginForm loginForm) {
         return managerRepository.findManagerByEmailAndHaslo(loginForm.getEmail(), loginForm.getPassword());
     }
 
+    /**
+     * Funkcja dodająca nowego managera do bazy, używana przy rejestracji
+     * @param form dane managera wpisane przy rejestracji
+     * @return id managera przy udanym zapisie do bazy, w przciwnym razie 0
+     */
     @PostMapping("/register")
     public Integer register(@RequestBody RegistrationForm form) {
         var manager = managerRepository.findManagerByEmail(form.getEmail());

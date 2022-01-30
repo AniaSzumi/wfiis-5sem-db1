@@ -16,6 +16,7 @@ function Worker({ user }) {
     const [currentShop, setCurrentShop] = useState('')
     const [categories, setCategories] = useState([])
     const [shopProducts, setShopProducts] = useState([])
+    const [shopAmount, setShopAmount] = useState([])
     const [productName, setProductName] = useState("")
     const [productCategory, setProductCategory] = useState("")
     const [productPrice, setProductPrice] = useState(0)
@@ -24,24 +25,28 @@ function Worker({ user }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("/sklep")
+        fetch("/api/sklep")
             .then((res) => res.json())
             .then((data) => setShops(data))
             .catch((error) => console.log(error))
-        fetch("/kategoria")
+        fetch("/api/kategoria")
             .then((res) => res.json())
             .then((data) => setCategories(data))
             .catch((error) => console.log(error))
-        fetch("/produkt/")
+        fetch("/api/produkt/")
             .then((res) => res.json())
             .then((data) => setAllProducts(data))
+            .catch((error) => console.log(error))
+        fetch("/api/sklep/produkty")
+            .then((res) => res.json())
+            .then((data) => setShopAmount(data))
             .catch((error) => console.log(error))
     }, [])
 
     useEffect(() => {
         let id = currentShop.split(".")[0]
         if (id !== "") {
-            fetch("produkt/sklep/" +id)
+            fetch("/api/produkt/sklep/" +id)
                 .then((res) => res.json())
                 .then((data) => setShopProducts(data))
                 .catch((error) => console.log(error))
@@ -56,15 +61,18 @@ function Worker({ user }) {
             cena: productPrice
         }
         if (productName !== "" && productCategory !== "" && productPrice !== 0) {
-            fetch("produkt", {
+            fetch("/api/produkt", {
                 method: 'POST',
                 mode: "cors",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(product)
             }).then((res) => res.text())
                 .then((data) => {
+                    data = parseInt(data)
                     if (data > 0) {
                         console.log("dodano")
+                    } else if (data === -1) {
+                        alert("Niepoprawne dane produktu")
                     } else {
                         console.log("nie dodano")
                     }
@@ -77,7 +85,7 @@ function Worker({ user }) {
 
     const addCategory = () => {
         if (categoryName !== "") {
-            fetch("kategoria/", {
+            fetch("/api/kategoria/", {
                 method: 'POST',
                 mode: "cors",
                 headers: {'Content-Type': 'application/json'},
@@ -104,7 +112,7 @@ function Worker({ user }) {
                 sklepId: inventoryShop.split(".")[0],
                 ilosc: inventoryAmount
             }
-            fetch("/produkt/sklep", {
+            fetch("/api/produkt/sklep", {
                 method: 'POST',
                 mode: "cors",
                 headers: {'Content-Type': 'application/json'},
@@ -146,6 +154,10 @@ function Worker({ user }) {
                 <Button variant="contained" onClick={addInventory}>Dodaj do sklepu</Button>
             </Stack>
             <Stack direction="column" alignItems="flex-start" spacing={2} mt={2}>
+                <Typography variant="h5">Ilość produktów w sklepach</Typography>
+                <List>
+                    {shopAmount.map((amount) => <ListItem key={amount.id}><ListItemText primary={amount.id+". "+amount.kraj+", "+amount.miasto+" "+amount.ulica+" "+amount.numer+" - "+amount.produkty+" szt"}/></ListItem>)}
+                </List>
                 <Typography variant="h5">Przeglądaj produkty w sklepie</Typography>
                 <Select label="Sklep" items={shops} value={currentShop} onChange={setCurrentShop} />
                 {shopProducts.length > 0 &&

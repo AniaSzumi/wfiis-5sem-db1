@@ -15,27 +15,36 @@ function Client({ user }) {
     const [currentProduct, setCurrentProduct] = useState("")
     const [count, setCount] = useState(0)
     const [orders, setOrders] = useState([])
+    const [summary, setSummary] = useState({})
+    const [cheapest, setCheapest] = useState([])
 
     const getNames = (items) => {
         return items.map((item) => item.nazwa + " (" + item.cena + " zł)")
     }
 
     useEffect(() => {
-        fetch("/sklep")
+        fetch("/api/sklep")
             .then((res) => res.json())
             .then((data) => setShops(data))
             .catch((error) => console.log(error))
-        fetch("/zamowienie/"+user.id)
+        fetch("/api/zamowienie/"+user.id)
             .then((res) => res.json())
-            // .then(data => console.log(data))
-            .then((data) => setOrders([data]))
+            .then((data) => setOrders(data))
+            .catch((error) => console.log(error))
+        fetch("/api/zamowienie/summary/"+user.id)
+            .then((res) => res.json())
+            .then((data) => setSummary(data))
+            .catch((error) => console.log(error))
+        fetch("/api/produkt/cheapest/")
+            .then((res) => res.json())
+            .then((data) => setCheapest(data))
             .catch((error) => console.log(error))
     }, [])
 
     useEffect(() => {
         let id = currentShop.split(".")[0]
         if (id !== "") {
-            fetch("/kategoria/sklep/" + id)
+            fetch("/api/kategoria/sklep/" + id)
                 .then((res) => res.json())
                 // .then((data) => console.log(data))
                 .then((data) => setCategories(data))
@@ -49,7 +58,7 @@ function Client({ user }) {
     useEffect(() => {
         let id = currentShop.split(".")[0]
         if (currentCategory !== "") {
-            fetch("/produkt/kategoria?" + new URLSearchParams({sklepId: id, kategoria: currentCategory}))
+            fetch("/api/produkt/kategoria?" + new URLSearchParams({sklepId: id, kategoria: currentCategory}))
                 .then((res) => res.json())
                 // .then((data) => console.log(data))
                 .then((data) => setProducts(data))
@@ -59,23 +68,28 @@ function Client({ user }) {
 
     function submit() {
         if (currentShop !== "" && currentCategory !== "" && currentProduct !== "") {
+            let product = products.find((product) => product.nazwa === currentProduct.split(" ")[0])
             let zamowienie = {
                 klientId: user.id,
                 sklepId: currentShop.split(".")[0],
-                produktId: products.find((product) => product.nazwa === currentProduct.split(" ")[0]).produktId,
-                ilosc: count
+                produktId: product.produktId,
+                ilosc: count,
+                suma: product.cena*count
             }
             console.log(JSON.stringify(zamowienie))
-            fetch("/zamowienie", {
+            fetch("/api/zamowienie", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(zamowienie)
-            }).then((res) => res.json())
+            }).then((res) => res.text())
                 .then((data) => {
-                    if (data != null) {
+                    data = parseInt(data)
+                    if (data > 0) {
                         alert("Dodano do zamówienia")
+                    } else if (data === -1) {
+                        alert("Niepoprawne wartości")
                     } else {
                         alert("Nie udało się dodać zamówienia")
                     }
@@ -102,14 +116,33 @@ function Client({ user }) {
             </Stack>
             <Stack direction="column" alignItems="flex-start" mt={4}>
                 <Typography variant="h5">Podsumowanie</Typography>
-                <List>
+                {Object.keys(summary).length > 0 &&
+                <Typography variant="body1" mt={2}>
+                    Ilość złożonych zamówień: {summary.zamowienia}<br />
+                    Ilość zamówionych produktów: {summary.produkty}<br />
+                    Łączna cena: {summary.cena} zł
+                </Typography>}
+                <Typography variant="h5" mt={2}>Lista zamówień</Typography>
+                <List style={{marginTop: 0}}>
                     {orders.map((order) => (
                         <ListItem disableGutters style={{justifyContent: "flex-start"}} key={order.id} ml={0}>
                             {/*<ListItemIcon><ArrowRightIcon /></ListItemIcon>*/}
-                            <ListItemText primary={order.nazwa+" - "+order.ilosc+" x "+order.cena+" zł"}/>
+                            <ListItemText style={{margin: 0}} primary={order.nazwa+" - "+order.ilosc+" x "+order.cena+" zł ("+order.sklepId+". "+order.kraj+", "+order.miasto+" "+order.ulica+" "+order.numer+")"}/>
                         </ListItem>
                     ) )}
                 </List>
+                {cheapest.length > 0 &&
+                <>
+                <Typography variant="h5">Ilość najtańszych produktów (&lt; 15 zł)</Typography>
+                <List style={{marginTop: 0}}>
+                    {cheapest.map((category) => (
+                        <ListItem disableGutters style={{justifyContent: "flex-start"}} key={category.id} ml={0}>
+                            <ListItemText primary={category.nazwa+": "+category.produkty}/>
+                        </ListItem>
+                    ) )}
+                </List>
+                </>
+                }
             </Stack>
         </Stack>
         </>

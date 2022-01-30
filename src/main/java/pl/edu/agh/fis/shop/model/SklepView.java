@@ -6,6 +6,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * Klasa mapująca się na widok sklep_adres z bazy danych, pokazuje sklep łącznie z jego adresem
+ */
 @Entity
 @Table(name = "sklep_adres")
 @Data

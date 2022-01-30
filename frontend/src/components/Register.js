@@ -18,7 +18,7 @@ function Register({ userRole, setUserRole }) {
             email: email,
             password: password
         }
-        fetch("/" + userRole + "/register", {
+        fetch("/api/" + userRole + "/register", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
